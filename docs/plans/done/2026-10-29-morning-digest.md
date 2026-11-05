@@ -1,8 +1,9 @@
 ---
 plan: morning-digest
-status: ready
+status: done
 owner: rook
 opened: 2026-10-29
+closed: 2026-11-05
 ---
 
 # Morning digest
@@ -77,3 +78,21 @@ page again with `LANE_MARKER` unset (the banner reads "no marker set") and uploa
 link. Move this plan to `docs/plans/done/` with its issue list.
 
 Done when: the preview link no longer shows the lane marker.
+
+## Issues
+
+| # | Issue | Blocked by | Worker | Closed |
+|---|-------|-----------|--------|--------|
+| 1 | Digest contract: src/digest/types.ts | — | claude-code · opus-5.5 · low | 2026-11-05 |
+| 2 | Run log reader: readNight | #1 | claude-code · sonnet-5.5 · default | 2026-11-05 |
+| 3 | Digest page: GET /digest/:night | #1 | claude-code · haiku-5.5 · default | 2026-11-05 |
+| 4 | Digest JSON: GET /api/digest/:night | #1 | claude-code · haiku-5.5 · default | 2026-11-05 |
+| 5 | Status board links each night to its digest with counts | #1 | claude-code · haiku-5.5 · default | 2026-11-05 |
+| 6 | Route tests for the digest page and JSON | #1 | claude-code · haiku-5.5 · default | 2026-11-05 |
+| 7 | Preview save command: pnpm preview <night> | #3 | claude-code · sonnet-5.5 · default | 2026-11-05 |
+| 8 | Publish the preview on GitHub Pages and send the reviewer the link | #2–#7 | claude-code · opus-5.5 · low | 2026-11-05 |
+| 9 | Clean up the preview: re-upload without the lane marker | #8 | claude-code · opus-5.5 · low | 2026-11-05 |
+| 10 | Move the plan to docs/plans/done with its issue list | #9 | claude-code · opus-5.5 · low | 2026-11-05 |
+
+#8 was closed once when the link was sent, before the reviewer looked, and reopened until the review was in.
+The preview is built by CI and deployed to Pages without committing HTML; its marker came off on 2026-11-05 (ADR 0003).
