@@ -1,0 +1,58 @@
+# Plan morning-digest § 3 / § 4 (issues #8, #9). Builds the digest preview in CI and deploys it
+# to GitHub Pages as an artifact: no HTML is ever committed (ADR 0003).
+# § 3: set repo variable LANE_MARKER, run this workflow. § 4: delete the variable, run it again;
+# the same link then shows "no marker set".
+name: preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      night:
+        description: Night to preview (YYYY-MM-DD)
+        default: '2026-10-28'
+        required: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm test
+      - name: Save the preview
+        env:
+          LANE_MARKER: ${{ vars.LANE_MARKER }}
+          NIGHT: ${{ inputs.night }}
+        run: |
+          pnpm preview "$NIGHT"
+          mkdir -p site
+          cp "var/preview/digest-$NIGHT.html" site/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
